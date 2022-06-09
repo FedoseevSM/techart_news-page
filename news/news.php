@@ -20,25 +20,15 @@ $totalPages = ceil(countRows('news') / $limit);
 // 
 function parseNews($table) {
     global $pdo;
-    $sth = $pdo->prepare("SELECT id, idate, title, announce, content FROM news");
+    global $limit;
+    global $offset;
+    $sth = $pdo->prepare("SELECT id, idate, title, announce, content FROM news ORDER BY idate DESC LIMIT $limit OFFSET $offset");
     $sth->execute();
     return $sth->fetchAll();
 }
 // 
 
-//
-function sortDate($a, $b) 
-{
-    if ($a["idate"] == $b["idate"]) {
-        return 0;
-    }
-    return (date('d-m-Y', $a["idate"]) > date('d-m-Y', $b["idate"])) ? -1 : 1;
-}
-//
-
-$newsPreSort = parseNews('news');
-usort($newsPreSort, 'sortDate');
-$news = array_slice($newsPreSort, $offset, $limit);
+$news = parseNews('news');
 
 ?>
 <!DOCTYPE html>
